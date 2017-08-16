@@ -6,7 +6,7 @@ import java.util.ArrayList;
  *
  * @author Mauricio Toro, Mateo Agudelo, Ricardo Azopardo, Jhon Chavarria
  */
-public class Taller2 {
+public class Taller3 {
 
     public static boolean sumaGrupo(int start, int[] nums, int target) {
         if ( start >= nums.length ) return target == 0;                                                              
