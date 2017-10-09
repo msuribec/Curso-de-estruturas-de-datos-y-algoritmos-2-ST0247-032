@@ -115,24 +115,21 @@ public class LaboratorioIIIDatosII {
     
         /**
      * Método auxiliar para llamar el método tieneCiclos, recorre en DFS, todo el 
-     * grafo desde todos los nodos a todos los nodos, completa todos los recorridos
+     * grafo desde iniciando desde todos los nodos, completa todos los recorridos
      * si no los encuentra, de lo contrario imprime que si los encontro.
      * @param gd grafo a recorrer.
-     * @return true si tiene ciclos, false por lo contrario
+     * @return true si tiene ciclos, false por lo contrario.
      */
-    public static boolean tieneCiclos (Digraph gd){
-        
+    public static boolean tieneCiclos (Digraph gd){        
         boolean [] tieneC = {false};
         for (int i = 0; i < gd.size()-1; i++){
-            for (int j = 0; j<gd.size()-1; j++){
                 boolean [] flags = new boolean [gd.size()];
-                tieneCiclos(gd, i, j, flags, tieneC);
+                tieneCiclos(gd, i, flags, tieneC);
                 if(tieneC[0]){
                     System.out.println("El grafo tiene ciclos.");
                     return true;
                 }
             }
-        }
         return false;
     }
     
@@ -141,28 +138,19 @@ public class LaboratorioIIIDatosII {
      * 
      * @param gd grafo a comprobar.
      * @param ini vertice inicial.
-     * @param fin vertice final. (Si se requiere recorrer el grafo 
-     * completo, se puede poner un vertice inexistente o fuera de rango).
      * @param flags Arreglo de booleanos para marcar vertices como visitados.
-     * @param tiene
+     * @param tiene arreglo de booleanos con una sola posición.
      * @return true, si completa los recorridos sin encontrar ciclos, false si 
      * encuentra ciclos, imprime indicando que los encontro.
      */
-    public static boolean tieneCiclos(Digraph gd, int ini, int fin, boolean [] flags, boolean [] tiene) {        
+    public static boolean tieneCiclos(Digraph gd, int ini, boolean [] flags, boolean [] tiene) {        
         flags[ini] = true;
-        tiene [0] = false;
-        if (ini == fin) {
-            return true;
-        }        
+        if (ini == gd.size()) return true;        
         ArrayList<Integer> hijos = gd.getSuccessors(ini);
-        if (hijos == null) {
-            return false;
-        }        
+        if (hijos == null) return false;        
         for (int i = 0; i < hijos.size(); i++) {            
             if (!flags[hijos.get(i)]){
-                if (tieneCiclos(gd, hijos.get(i), fin, flags, tiene)){
-                    return true;
-                }
+                if (tieneCiclos(gd, hijos.get(i), flags, tiene)) return true;
                 } else {
                 tiene [0] = true;
                 return false;
