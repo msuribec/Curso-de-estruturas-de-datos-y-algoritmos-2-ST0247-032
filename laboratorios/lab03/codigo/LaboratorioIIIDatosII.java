@@ -6,8 +6,10 @@
 package laboratorioiiidatosii;
 
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.LinkedList;
 import java.util.Queue;
+import java.util.Stack;
 
 /**
  *
@@ -159,12 +161,56 @@ public class LaboratorioIIIDatosII {
         return false;
     }
     
+    public static ArrayList<Integer> caminoMasCorto (Digraph gd, int ini, int fin){
+        int [] camino = new int [gd.size()];
+        int [] distancias = new int [gd.size()];
+        for (int i = 0; i<distancias.length;i++){
+            distancias[i] = Integer.MAX_VALUE;
+        }
+        distancias[ini] = 0;
+        caminoMasCorto(gd, ini, fin, camino, distancias);
+        ArrayList<Integer> visitados = new ArrayList<Integer>(gd.size());
+        while (fin != ini){
+            int num = camino[fin];
+            visitados.add(fin);
+            fin = num;
+        }
+        visitados.add(ini);
+        Collections.reverse(visitados);
+        return visitados;
+    }
+    
+    public static boolean caminoMasCorto (Digraph gd, int ini, int fin, int[] camino, int [] distancias){
+        if (ini == fin) return true;        
+        ArrayList<Integer> hijos = gd.getSuccessors(ini);
+        if (hijos == null) return false;
+        for (int i = 0; i < hijos.size(); i++) {
+            if (gd.getWeight(ini, hijos.get(i))+ distancias[ini] < distancias[hijos.get(i)]){
+                distancias[hijos.get(i)] = gd.getWeight(ini, hijos.get(i)) + distancias[ini];
+                camino[hijos.get(i)] = ini;                
+                caminoMasCorto(gd, hijos.get(i), fin, camino, distancias);                
+            }
+        }        
+        return false;
+    }
     
     /**
      * @param args the command line arguments
      */
     public static void main(String[] args) {
-        nReinasUnaSol(27);
+        
+        DigraphAL grafo1 = new DigraphAL(7);
+        grafo1.addArc(0, 1, 4);
+        grafo1.addArc(1, 2, 2);
+        grafo1.addArc(1, 5, 6);
+        grafo1.addArc(0, 3, 4);
+        grafo1.addArc(3, 4, 3);
+        grafo1.addArc(4, 5, 1);
+        grafo1.addArc(0, 6, 9);
+        grafo1.addArc(6, 5, 2);
+        
+        System.out.println(caminoMasCorto (grafo1, 0, 5).toString());
+        }
     }
     
-}
+
