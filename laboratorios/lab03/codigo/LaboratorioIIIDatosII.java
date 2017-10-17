@@ -9,15 +9,22 @@ import java.util.ArrayList;
 import java.util.Collections;
 import java.util.LinkedList;
 import java.util.Queue;
-import java.util.Stack;
 
 /**
- *
- * @author usuario
+ * LaboratorioIII Datos y Algoritmos.
+ * @author Ricardo Azopardo, Jhon Chavarria
  */
 public class LaboratorioIIIDatosII {
     
-    private static boolean puedoPonerReina(int r, int c, int[] tablero) {
+    /**
+     * Método para comprobar si se puede colocar una reina en una determinada posición en un tablero.
+     * @param r Número de filas a probar.
+     * @param c Columna donde se va a probar.
+     * @param tablero Tablero de ajedrez representado por un arreglo.
+     * @return False si no se puede colocar una reina, true de lo contrario.
+     */
+
+    public static boolean puedoPonerReina(int r, int c, int[] tablero) {
         for (int i = 0; i < r; ++i) {
             if (tablero[i] == c || i - tablero[i] == r - c || i + tablero[i] == r + c) {
                 return false;
@@ -26,6 +33,12 @@ public class LaboratorioIIIDatosII {
         return true;
     }
         
+    /**
+     * Llama el método "nReinas" el cual encuentra una solución del problema de las n-reinas utilizando backtracking.
+     * @param n Tamaño del tablero.
+     * @return false si no existe solución, true si encuentra 
+     * una solución.
+     */
     public static boolean nReinasUnaSol(int n) {
         int[] tablero = new int[n];
         
@@ -41,7 +54,15 @@ public class LaboratorioIIIDatosII {
         }       
     }
 
-    private static boolean nReinas(int r, int n, int[] tablero) {
+    /**
+     * Método para encontrar una solución del problema de las n-reinas utilizando
+     * backtracking.
+     * @param r Fila que en la que se esta evaluando actualmente.
+     * @param n Tamaño del tablero.
+     * @param tablero Tablero.
+     * @return true si encuentra al menos una solución.
+     */
+    public static boolean nReinas(int r, int n, int[] tablero) {
         if (r == n) {
             imprimirTablero(tablero);
             return true;
@@ -57,6 +78,11 @@ public class LaboratorioIIIDatosII {
         return false;
     }
     
+    /**
+     * Método para imprimir la representación de tableros con arreglos con reinas
+     * posicionadas.
+     * @param tablero Tablero a imprimir.
+     */
     public static void imprimirTablero(int[] tablero) {
         int n = tablero.length;
         System.out.print("    ");
@@ -73,9 +99,7 @@ public class LaboratorioIIIDatosII {
         }
         System.out.println();
     }
-    
-    
-
+        
     /**
      * Método para recorrer grafos por amplitud (BFS).
      * 
@@ -109,13 +133,21 @@ public class LaboratorioIIIDatosII {
         return false;
     }
     
+    /**
+     * LLama el método BFS que recorre un grafo por amplitud, retorna un arreglo
+     * con los nodos en el orden que fueron visitados.
+     * @param gd grafo a recorrer.
+     * @param ini nodo inicial.
+     * @param fin nodo final.
+     * @return arreglo con camino.
+     */
     public static ArrayList BFS(Digraph gd, int ini, int fin) {
         ArrayList<Integer> camino = new ArrayList<Integer>();
         BFS(gd, ini, fin, camino);
         return camino;
     }
     
-        /**
+     /**
      * Método auxiliar para llamar el método tieneCiclos, recorre en DFS, todo el 
      * grafo desde iniciando desde todos los nodos, completa todos los recorridos
      * si no los encuentra, de lo contrario imprime que si los encontro.
@@ -149,8 +181,8 @@ public class LaboratorioIIIDatosII {
         flags[ini] = true;
         if (ini == gd.size()) return true;        
         ArrayList<Integer> hijos = gd.getSuccessors(ini);
-        if (hijos == null) return false;        
-        for (int i = 0; i < hijos.size(); i++) {            
+        if (hijos == null) return false;
+        for (int i = 0; i < hijos.size(); i++){            
             if (!flags[hijos.get(i)]){
                 if (tieneCiclos(gd, hijos.get(i), flags, tiene)) return true;
                 } else {
@@ -161,6 +193,15 @@ public class LaboratorioIIIDatosII {
         return false;
     }
     
+    /**
+     * LLama el método con el mismo nombre, asignandole un arreglo con distancias
+     * hasta el infinito, simbolizando que son desconocidas, limpia la salida del
+     * método principal y retorna el camino más corto entre dos nodos.
+     * @param gd grafo.
+     * @param ini nodo inicial.
+     * @param fin nodo destino.
+     * @return arreglo de nodos con el camino más corto entre dos nodos.
+     */
     public static ArrayList<Integer> caminoMasCorto (Digraph gd, int ini, int fin){
         int [] camino = new int [gd.size()];
         int [] distancias = new int [gd.size()];
@@ -180,6 +221,17 @@ public class LaboratorioIIIDatosII {
         return visitados;
     }
     
+    /**
+     * Método para encontrar el camino más corto entre dos vertices en un grafo
+     * con pesos utilizando backtracking.
+     * @param gd grafo.
+     * @param ini nodo inicial.
+     * @param fin nodo destino.
+     * @param camino camino entre los vertices.
+     * @param distancias arreglo para simbolizar distancias entre el nodo inicial
+     * hasta cada uno de los nodos.
+     * @return arreglo con al menos una solución. (Se limpia en método auxiliar).
+     */
     public static boolean caminoMasCorto (Digraph gd, int ini, int fin, int[] camino, int [] distancias){
         if (ini == fin) return true;        
         ArrayList<Integer> hijos = gd.getSuccessors(ini);
@@ -188,9 +240,9 @@ public class LaboratorioIIIDatosII {
             if (gd.getWeight(ini, hijos.get(i))+ distancias[ini] < distancias[hijos.get(i)]){
                 distancias[hijos.get(i)] = gd.getWeight(ini, hijos.get(i)) + distancias[ini];
                 camino[hijos.get(i)] = ini;                
-                caminoMasCorto(gd, hijos.get(i), fin, camino, distancias);                
+                caminoMasCorto(gd, hijos.get(i),fin,camino,distancias);                
             }
-        }        
+        }
         return false;
     }
     
@@ -198,19 +250,11 @@ public class LaboratorioIIIDatosII {
      * @param args the command line arguments
      */
     public static void main(String[] args) {
-        
-        DigraphAL grafo1 = new DigraphAL(7);
-        grafo1.addArc(0, 1, 4);
-        grafo1.addArc(1, 2, 2);
-        grafo1.addArc(1, 5, 6);
-        grafo1.addArc(0, 3, 4);
-        grafo1.addArc(3, 4, 3);
-        grafo1.addArc(4, 5, 1);
-        grafo1.addArc(0, 6, 9);
-        grafo1.addArc(6, 5, 2);
-        
-        System.out.println(caminoMasCorto (grafo1, 0, 5).toString());
-        }
+        long iniTime = System.currentTimeMillis();
+        nReinasUnaSol(32);
+        long finTime = System.currentTimeMillis();
+        System.out.println(finTime - iniTime);
+    }
     }
     
 
