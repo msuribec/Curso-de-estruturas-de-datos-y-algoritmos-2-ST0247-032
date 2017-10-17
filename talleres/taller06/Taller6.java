@@ -34,31 +34,26 @@ public class Taller6 {
             return null;
         }
         return denominaciones;
-        /*    
-        for (int i = 0; i<denominaciones.length;i++){
-                int cont = 0;
-                while (n >= denominaciones[i]){
-                    cont++;      
-                    n -= denominaciones[i];
-                }                
-                denominaciones[i] = cont;             
-            }
-            if (n != 0){
-                return null;
-            }
-            return denominaciones;
-         */
     }
 
+    /**
+     * Recorre todos los nodos de un grafo completo y vuelve al inicio, usando la
+     * tecnica del vecino más cercano.
+     * @param g grafo a recorrer.
+     * @return costo minimo para recorrer todos los nodos (al ser greedy no encuentra
+     * el resultado más correcto).
+     */
     public static int recorrido(Digraph g) {
         int menor = 0;
         int mincost = 0;
-        boolean[] visitados = new boolean[g.size()];
+        int nroNodos = 1;
+        int tamaño = g.size();
+        boolean[] visitados = new boolean[tamaño];
         visitados[0] = true;
-        while (!contains(visitados)) {
+        while (nroNodos != tamaño) {
             ArrayList<Integer> hijos = g.getSuccessors(menor);
             int padre = menor;
-            for (int j = 0; j < hijos.size()-1; j++) {
+            for (int j = 0; j < tamaño-2; ++j) {
                 if (!visitados[hijos.get(j)] && g.getWeight(menor, hijos.get(j)) < g.getWeight(menor, hijos.get(j+1))) {
                     menor = hijos.get(j);  
                 } else {
@@ -67,20 +62,12 @@ public class Taller6 {
             }
             mincost += g.getWeight(padre, menor);
             visitados[menor] = true;
+            nroNodos++;
         }
         mincost += g.getWeight(menor, 0);
         return mincost;
     }
-
-    public static boolean contains(boolean[] visitados) {
-        for (int i = 0; i < visitados.length; i++) {
-            if (!visitados[i]) {
-                return false;
-            }
-        }
-        return true;
-    }
-
+    
     public static void main(String[] args) {
         DigraphAL grafo = new DigraphAL(4);
         grafo.addArc(0, 1, 7);
