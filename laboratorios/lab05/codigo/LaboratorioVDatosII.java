@@ -14,7 +14,7 @@ import java.util.Set;
 
 /**
  *
- * @author usuario
+ * @author Ricardo Azopardo, Jhon Chavarria
  */
 public class LaboratorioVDatosII {
     
