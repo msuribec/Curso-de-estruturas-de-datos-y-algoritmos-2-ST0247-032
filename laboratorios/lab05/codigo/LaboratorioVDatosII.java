@@ -7,6 +7,8 @@ package laboratoriovdatosii;
 
 import java.util.ArrayList;
 import java.util.Collections;
+import java.util.Comparator;
+import java.util.HashMap;
 import java.util.HashSet;
 import java.util.Set;
 
@@ -51,7 +53,7 @@ public class LaboratorioVDatosII {
      /**
      * Llama y limpia la lista de los subconjuntos generados por el método
      * subconjuntosAux y los almacena en sets de mascaras de bits.
-     * @param size
+     * @param size numero de vertices del grafo.
      * @return arreglo de subconjuntos.
      */
     public static ArrayList<BitmaskSet>subconjuntos(int size){
@@ -61,15 +63,13 @@ public class LaboratorioVDatosII {
             s += Integer.toString(i+1);
         }        
         ArrayList<String> list = subconjuntosAux(s);
-        System.out.println(list.toString());
         Set<String> conjuntos = new HashSet<>(list);
         ArrayList<String> conjuntosArreglados = new ArrayList<>(conjuntos);
+        Collections.sort(conjuntosArreglados, Comparator.comparingInt(String::length));
         for (int c = 0; c<conjuntosArreglados.size(); ++c){
             BitmaskSet subconjunto = new BitmaskSet();
             for(int j = 0;j<=conjuntosArreglados.get(c).length()-1;++j){ 
-            char numero = conjuntosArreglados.get(c).charAt(j);
-            int elemento = Character.getNumericValue(numero);
-            subconjunto.add(elemento);
+            subconjunto.add(Character.getNumericValue(conjuntosArreglados.get(c).charAt(j)));
             }
             resultado.add(subconjunto);
         }
@@ -100,11 +100,85 @@ public class LaboratorioVDatosII {
         return list;
     }
     
+    public static int heldKarp (Digraph gd){
+        HashMap<BitmaskSet, Integer> tablaDP = new HashMap<>();
+        int size = gd.size();
+        ArrayList<BitmaskSet> subconjuntos = subconjuntos(size);
+        for (int i = 0; i<subconjuntos.size();++i){
+            for(int j = 0; j<size;j++){
+                if(subconjuntos.get(i).contains(j)){
+                    continue;
+                }
+                int minimoCosto = Integer.MAX_VALUE;
+                
+                BitmaskSet copia = subconjuntos.get(i);
+                for (int prevVertex = 1; prevVertex < obtenerRepresentacion(subconjuntos.get(i)).size();++prevVertex){
+                    System.out.println(prevVertex + " " + j);
+                    int costo = gd.getWeight(prevVertex, j) 
+                            + obtenerCosto(copia, prevVertex, tablaDP);
+                            System.out.println("costo: " + costo);
+                    if (costo < minimoCosto){
+                        minimoCosto = costo;
+                    }
+                }
+                
+                if(subconjuntos.get(i).size() == 0){
+                    minimoCosto = gd.getWeight(0, j);
+                }
+                
+                tablaDP.put(subconjuntos.get(i), minimoCosto);
+            }
+        }
+        
+        BitmaskSet set = new BitmaskSet();
+        for (int i=1; i < size;i++){
+            set.add(i);
+        }
+        
+        int min = Integer.MAX_VALUE;
+        
+        BitmaskSet copia = new BitmaskSet();
+        for (int k : obtenerRepresentacion(set)){
+            int costo = gd.getWeight(k, 0) + obtenerCosto(copia, k, tablaDP);
+            if(costo < min){
+                min = costo;
+            }
+        }
+        
+        return min;
+    }
+    
     /**
-     * Encuentra la longitud de la subsecuencia mas larga entre dos cadenas.
-     * @param cadena primera cadena
-     * @param secuencia
-     * @return
+     * Crea la representacion en forma de set de un bitmaskSet.
+     * @param mask mascara de bits.
+     * @return conjunto en forma de Set de java.
+     */
+    public static Set<Integer> obtenerRepresentacion(BitmaskSet mask){
+        String binario = Integer.toBinaryString(mask.mask());
+        int tamaño = binario.length()-1;
+        Set<Integer> set = new HashSet<Integer>();
+        for (int i = tamaño; i>=0;--i){
+             if (binario.charAt(i) == '1'){
+                 set.add(tamaño - i);
+             }
+        }
+        return set;
+    }    
+
+    public static int obtenerCosto(BitmaskSet set, int prev, HashMap<BitmaskSet, Integer> tablaDP){
+        set.remove(prev);
+        int costo = tablaDP.get(set);
+        set.add(prev);
+        System.out.println ("COSTO = " + costo);
+        return costo;
+    }
+    
+        /**
+     * Encuentra la longitud de la subsecuencia mas larga entre dos cadenas de 
+     * caracteres.
+     * @param cadena1 primera cadena.
+     * @param cadena2 segunda cadena.
+     * @return longitud de subsecuencia mas larga.
      */
     public static int subsecuenciaMasLarga(String cadena1, String cadena2) {
         int i,j = 0;
@@ -134,8 +208,20 @@ public class LaboratorioVDatosII {
      * @param args the command line arguments
      */
     public static void main(String[] args) {
-        System.out.println(subsecuenciaMasLarga("AGGTAB", "GXTXAYB"));
-        ArrayList<BitmaskSet> subconjunto = subconjuntos(3);
+        DigraphAL grafo = new DigraphAL(4);
+        grafo.addArc(0, 1, 7);
+        grafo.addArc(0, 2, 15);
+        grafo.addArc(0, 3, 6);
+        grafo.addArc(1, 0, 2);
+        grafo.addArc(1, 2, 7);
+        grafo.addArc(1, 3, 3);
+        grafo.addArc(2, 0, 9);
+        grafo.addArc(2, 1, 6);
+        grafo.addArc(2, 3, 12);
+        grafo.addArc(3, 0, 10);
+        grafo.addArc(3, 1, 4);
+        grafo.addArc(3, 2, 8);
+        System.out.println(heldKarp(grafo));
     }
     
 }

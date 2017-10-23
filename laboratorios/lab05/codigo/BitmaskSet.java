@@ -5,6 +5,9 @@
  */
 package laboratoriovdatosii;
 
+import java.util.HashSet;
+import java.util.Set;
+
 /**
  * Esta clase permite almacenar de forma eficiente un conjunto de hasta 30
  * enteros. Tenga en cuenta que solo puede almacenar enteros contenidos en [0,
@@ -91,7 +94,10 @@ public class BitmaskSet {
 	public void add(int k) {
 		mask |= 1 << k;
 	}
-
+        
+        public void remove(int k) {
+		mask -= 1 << k;
+        }
 	// getters
 
 	/**
@@ -109,4 +115,13 @@ public class BitmaskSet {
 	public int size() {
 		return size;
 	}
+        
+        
+        public static void main (String args[]){
+            BitmaskSet mascara = new BitmaskSet();
+            mascara.add(3);
+            mascara.add(1);
+            mascara.add(2);
+            System.out.println(Integer.toBinaryString(mascara.mask()));
+        }
 }
