@@ -101,14 +101,57 @@ public class LaboratorioVDatosII {
     }
     
     public static int heldKarp (Digraph gd){
-        HashMap<BitmaskSet, Integer> tablaDP = new HashMap<>();
+        int tamaño = gd.size();
+        int[][] dp = new int [tamaño][1 << tamaño];
+        BitmaskSet mask = new BitmaskSet(tamaño);
+        mask.add(0);
+        for (int i = 0; i<tamaño;++i){
+            for(int j=0;j<dp[i].length;++j){
+                dp[i][j] = -1;
+            }
+        }
+        return heldKarp(gd, 0, dp, mask);
+    }
+    /**
+     * Calcula el costo minimo que visitar todos los vertices y volver al inicio
+     * haciendo uso de programacion dinamica.
+     * @param gd grafo a recorrer.
+     * @param vertice
+     * @param dp
+     * @param mask
+     * @return costo minimo.
+     */
+    public static int heldKarp (Digraph gd, int vertice, int [][] dp, BitmaskSet mask){
+        if (mask.isFull()){
+            return gd.getWeight(vertice, 0);
+        }
+        int mascara = mask.mask();
+        if (dp[vertice][mascara] != -1){
+            return dp[vertice][mascara];
+        }
+        int min = Integer.MAX_VALUE;
+        for (int i = 0;i<gd.size();i++){
+            if(!mask.contains(i)){
+                BitmaskSet copia = new BitmaskSet(mask);
+                copia.add(i);
+                int tmp = heldKarp(gd, i, dp, copia) + gd.getWeight(vertice, i);
+                if (tmp < min){
+                    min = tmp;
+                }
+            }
+        }
+        return min;
+        
+    /*        HashMap<BitmaskSet, Integer> tablaDP = new HashMap<>();
         int size = gd.size();
         ArrayList<BitmaskSet> subconjuntos = subconjuntos(size);
         for (int i = 0; i<subconjuntos.size();++i){
             for(int j = 0; j<size;j++){
+                
                 if(subconjuntos.get(i).contains(j)){
                     continue;
                 }
+                
                 int minimoCosto = Integer.MAX_VALUE;
                 
                 BitmaskSet copia = subconjuntos.get(i);
@@ -116,7 +159,6 @@ public class LaboratorioVDatosII {
                     System.out.println(prevVertex + " " + j);
                     int costo = gd.getWeight(prevVertex, j) 
                             + obtenerCosto(copia, prevVertex, tablaDP);
-                            System.out.println("costo: " + costo);
                     if (costo < minimoCosto){
                         minimoCosto = costo;
                     }
@@ -143,9 +185,7 @@ public class LaboratorioVDatosII {
             if(costo < min){
                 min = costo;
             }
-        }
-        
-        return min;
+        }*/
     }
     
     /**
@@ -165,6 +205,13 @@ public class LaboratorioVDatosII {
         return set;
     }    
 
+    /**
+     * Obtiene el costo minimo entre dos vertices de la tabla de DP.
+     * @param set conjunto al ser usado como llave.
+     * @param prev padre.
+     * @param tablaDP tabla de programacion dinamica.
+     * @return costo minimo en la tabla.
+     */
     public static int obtenerCosto(BitmaskSet set, int prev, HashMap<BitmaskSet, Integer> tablaDP){
         set.remove(prev);
         int costo = tablaDP.get(set);
@@ -173,7 +220,7 @@ public class LaboratorioVDatosII {
         return costo;
     }
     
-        /**
+     /**
      * Encuentra la longitud de la subsecuencia mas larga entre dos cadenas de 
      * caracteres.
      * @param cadena1 primera cadena.
