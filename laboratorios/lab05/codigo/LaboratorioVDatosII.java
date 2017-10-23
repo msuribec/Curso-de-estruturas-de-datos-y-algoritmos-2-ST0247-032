@@ -100,6 +100,12 @@ public class LaboratorioVDatosII {
         return list;
     }
     
+    /**
+     * Consigue el minimo costo del camino que recorre todos los vertices
+     * y vuelve al inicio de un grafo completo usando dp.
+     * @param gd
+     * @return
+     */
     public static int heldKarp (Digraph gd){
         int tamaño = gd.size();
         int[][] dp = new int [tamaño][1 << tamaño];
